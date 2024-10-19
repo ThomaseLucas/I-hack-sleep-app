@@ -15,6 +15,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isPasswordVisible = false; // Track the visibility of the password
 
   Future<void> _register(BuildContext context) async {
     String username = _usernameController.text;
@@ -29,10 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    print(
-        "DEBUG: Username: $username, Email: $email, Password: $password"); // Debugging
-
-    const String apiUrl = "http://10.244.30.167:5000/register";
+    const String apiUrl = "https://sleep.solarwolf.xyz/register";
 
     try {
       var response = await http.post(
@@ -41,9 +39,6 @@ class _RegisterPageState extends State<RegisterPage> {
         body: json.encode(
             {'username': username, 'email': email, 'password': password}),
       );
-
-      print("DEBUG: Response Status: ${response.statusCode}"); // Debugging
-      print("DEBUG: Response Body: ${response.body}"); // Debugging
 
       if (!mounted) return; // Ensure the widget is still mounted
 
@@ -59,17 +54,15 @@ class _RegisterPageState extends State<RegisterPage> {
         );
       }
     } catch (error) {
-      print("DEBUG: Error registering: $error"); // Debugging
       if (!mounted) return; // Ensure the widget is still mounted
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Error registering. Please try again later.')));
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Stack(
         children: [
           // Add the rain background
@@ -95,26 +88,74 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextField(
                         controller: _usernameController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Username',
+                          fillColor: Colors.grey[300], // Light gray background
+                          filled: true, // Apply background color
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey[600]!, // Darker gray border
+                              width: 2.0,
+                            ),
+                          ),
+                          prefixIcon:
+                              const Icon(Icons.person), // Icon for username
                         ),
                       ),
+                      const SizedBox(height: 16.0),
                       TextField(
                         controller: _emailController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Email',
+                          fillColor: Colors.grey[300], // Light gray background
+                          filled: true, // Apply background color
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey[600]!, // Darker gray border
+                              width: 2.0,
+                            ),
+                          ),
+                          prefixIcon: const Icon(Icons.email), // Icon for email
                         ),
                         keyboardType: TextInputType.emailAddress,
                       ),
+                      const SizedBox(height: 16.0),
                       TextField(
                         controller: _passwordController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Password',
+                          fillColor: Colors.grey[300], // Light gray background
+                          filled: true, // Apply background color
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey[600]!, // Darker gray border
+                              width: 2.0,
+                            ),
+                          ),
+                          prefixIcon:
+                              const Icon(Icons.lock), // Icon for password
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Toggle visibility based on the _isPasswordVisible variable
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
                         ),
-                        obscureText: true,
+                        obscureText: !_isPasswordVisible, // Toggle obscure text
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
@@ -124,11 +165,25 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: const Text('Register'),
                       ),
                       const SizedBox(height: 10),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); // Go back to login
-                        },
-                        child: const Text('Already have an account? Log in'),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10.0,
+                          horizontal: 15.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white, // White background
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Rounded corners
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // Go back to login
+                          },
+                          child: const Text(
+                            'Already have an account? Log in',
+                            style: TextStyle(color: Colors.black), // Black text
+                          ),
+                        ),
                       ),
                     ],
                   ),

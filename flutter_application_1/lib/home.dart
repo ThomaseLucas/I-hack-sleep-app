@@ -7,7 +7,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -54,14 +53,16 @@ class HomePage extends StatelessWidget {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFBF77F6), // Button background color
+                          backgroundColor: const Color(
+                              0xFFBF77F6), // Button background color
                           foregroundColor: Colors.white, // Button text color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/login'); // Navigate to LoginPage
+                          Navigator.pushNamed(
+                              context, '/login'); // Navigate to LoginPage
                         },
                         child: const Text('Login'),
                       ),
