@@ -49,7 +49,7 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-  void _stopTimer() {
+  void _pauseTimer() {
     setState(() {
       _isRunning = false;
     });
@@ -57,7 +57,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   void _resetTimer() async {
-    _stopTimer(); // Stop the timer first
+    _pauseTimer(); // Stop the timer first
     setState(() {
       _seconds = 0; // Reset the seconds to 0
     });
@@ -65,7 +65,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   Future<void> logSleepData(int timeElapsed) async {
-    const String apiUrl = 'http://10.244.30.167:5000/log_sleep'; // API URL
+    const String apiUrl = 'https://sleep.solarwolf.xyz/log_sleep'; // API URL
 
     try {
       double hoursSlept = timeElapsed / 3600;
@@ -113,7 +113,6 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -140,6 +139,18 @@ class _TimerPageState extends State<TimerPage> {
                 style: const TextStyle(fontSize: 18),
               ),
             ),
+            if (_isRunning) ...[
+              const SizedBox(height: 10), // Add space between buttons
+              FloatingActionButton(
+                onPressed: _pauseTimer,
+                backgroundColor: const Color(
+                    0xFFBF77F6), // Same color as Start Tracking button
+                child: const Icon(
+                  Icons.pause,
+                  color: Colors.black,
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -163,49 +174,25 @@ class _TimerPageState extends State<TimerPage> {
               ),
             ),
           ),
-
-          // Other buttons on the right side
+          // Stats button on the bottom-right corner
           Positioned(
             bottom: 16,
             right: 16,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  onPressed: _toggleTimer,
-                  tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    _isRunning ? Icons.pause : Icons.play_arrow,
-                    color: Colors.black,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const StatsPage(),
                   ),
-                ),
-                const SizedBox(height: 16),
-                FloatingActionButton(
-                  onPressed: _resetTimer,
-                  tooltip: 'Restart Timer',
-                  backgroundColor: Colors.white,
-                  child: const Icon(
-                    Icons.replay,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const StatsPage()),
-                    );
-                  },
-                  tooltip: 'View Stats',
-                  backgroundColor: Colors.white,
-                  child: const Icon(
-                    Icons.show_chart,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
+                );
+              },
+              backgroundColor: Colors.white,
+              child: const Icon(
+                Icons.show_chart,
+                color: Colors.black,
+              ),
+              tooltip: 'View Stats',
             ),
           ),
         ],
