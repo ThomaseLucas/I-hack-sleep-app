@@ -46,7 +46,7 @@ def login_user():
     
     user = users_collection.find_one({"username": username})
     if user and bcrypt.checkpw(password.encode('utf-8'), user['hashed_password'].encode('utf-8')):
-        return jsonify({"message": "Login successful!"}), 200
+        return jsonify({"message": "Login successful!", "username": username}), 200
     
     return jsonify({"message": "Invalid username or password"}), 401
 
