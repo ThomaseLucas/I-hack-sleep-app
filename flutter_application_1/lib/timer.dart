@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'stats.dart';
+import 'dart:convert'; 
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -13,6 +15,7 @@ class _TimerPageState extends State<TimerPage> {
   Timer? _timer;
   int _seconds = 0;
   bool _isRunning = false;
+  String username = 'user@example.com';
 
   void _toggleTimer() {
     if (_isRunning) {
@@ -33,11 +36,12 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-  void _stopTimer() {
+  void _stopTimer() async {
     setState(() {
       _isRunning = false;
     });
     _timer?.cancel();
+    await logSleepData(_seconds);
   }
 
   void _resetTimer() {
@@ -46,6 +50,39 @@ class _TimerPageState extends State<TimerPage> {
       _seconds = 0; // Reset the seconds to 0
     });
   }
+
+  Future<void> logSleepData(int timeElapsed) async {
+    const String apiUrl = 'http://10.0.2.2:5000/log_sleep'; // Change to your API URL
+
+    try {
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'user': username,
+          'time_slept': timeElapsed,
+          'date': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      // Check the response status and show a snackbar if needed
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sleep data logged successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to log sleep data.')),
+        );
+      }
+    } catch (error) {
+      print("DEBUG: Error logging sleep data: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error logging sleep data. Please try again later.')),
+      );
+    }
+  }
+
 
   String _formatTime(int totalSeconds) {
     int hours = totalSeconds ~/ 3600;
@@ -72,7 +109,7 @@ class _TimerPageState extends State<TimerPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const Text(
               'Timer is running for:',
             ),
@@ -81,11 +118,11 @@ class _TimerPageState extends State<TimerPage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Image.asset(
-              'assets/koala_sleeping.png',
-              height: 100, 
-              width: 100,
+              _isRunning
+                  ? 'assets/frog_asleep.jpg' // Display asleep image
+                  : 'assets/frog_awake.jpeg', // Display awake image
             ),
 
           ],

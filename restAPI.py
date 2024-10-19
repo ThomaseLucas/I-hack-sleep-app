@@ -76,7 +76,26 @@ def get_sleep_logs(username):
 
     return jsonify(logs), 200
 
+@app.route('/leaderboard', methods=['GET'])
+def get_leaderboard():
+    # Grouping the sleep logs by user and summing the total hours slept
+    pipeline = [
+        {
+            '$group': {
+                '_id': '$user',
+                'total_hours': {'$sum': '$time_slept'}
+            }
+        },
+        {
+            '$sort': {'total_hours': -1}  # Sort by total_hours descending
+        }
+    ]
+    leaderboard = list(sleep_logs_collection.aggregate(pipeline))
 
+    for entry in leaderboard:
+        entry['_id'] = str(entry['_id'])
+
+    return jsonify(leaderboard), 200
 
 @app.route('/stats', methods=['GET'])
 def display_stats():
