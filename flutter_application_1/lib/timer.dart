@@ -68,12 +68,14 @@ class _TimerPageState extends State<TimerPage> {
     const String apiUrl = 'http://192.168.56.1:5000/log_sleep'; // API URL
 
     try {
+      double hoursSlept = timeElapsed / 3600;
+
       var response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'user': username, // Use the logged-in username
-          'time_slept': _formatTime(timeElapsed),
+          'time_slept': hoursSlept,
           'date': DateTime.now().toIso8601String(),
         }),
       );
