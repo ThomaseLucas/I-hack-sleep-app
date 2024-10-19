@@ -49,19 +49,19 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-  void _stopTimer() async {
+  void _stopTimer() {
     setState(() {
       _isRunning = false;
     });
     _timer?.cancel();
-    await logSleepData(_seconds);
   }
 
-  void _resetTimer() {
+  void _resetTimer() async {
     _stopTimer(); // Stop the timer first
     setState(() {
       _seconds = 0; // Reset the seconds to 0
     });
+    await logSleepData(_seconds);
   }
 
   Future<void> logSleepData(int timeElapsed) async {
