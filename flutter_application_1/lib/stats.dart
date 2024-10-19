@@ -6,7 +6,8 @@ class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
 
   Future<List<dynamic>> fetchLeaderboard() async {
-    const String apiUrl = 'http://10.0.2.2:5000/leaderboard'; // Adjust IP if necessary
+    const String apiUrl =
+        'http://192.168.56.1:5000/leaderboard'; // Adjust IP if necessary
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
@@ -36,7 +37,8 @@ class StatsPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(leaderboard[index]['_id']),
-                  subtitle: Text('Total Hours: ${leaderboard[index]['total_hours']}'),
+                  subtitle:
+                      Text('Total Hours: ${leaderboard[index]['total_hours']}'),
                 );
               },
             );
