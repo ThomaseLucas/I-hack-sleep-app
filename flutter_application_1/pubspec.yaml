@@ -62,8 +62,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
 
   assets:
-    - assets/frog_asleep.jpg
-    - assets/frog_awake.jpeg
+    - assets/frog_asleep.png
+    - assets/frog_awake.png
     - assets/waving_frog.png
   
 

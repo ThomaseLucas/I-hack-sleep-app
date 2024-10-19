@@ -126,7 +126,7 @@ class _TimerPageState extends State<TimerPage> {
             ),
             const SizedBox(height: 10),
             Image.asset(
-              _isRunning ? 'assets/frog_asleep.jpg' : 'assets/frog_awake.jpeg',
+              _isRunning ? 'assets/frog_asleep.png' : 'assets/frog_awake.png',
             ),
             const SizedBox(height: 20), // Add some space below the image
             ElevatedButton(
