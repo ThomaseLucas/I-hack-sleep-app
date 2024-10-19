@@ -46,7 +46,7 @@ def login_user():
     
     user = users_collection.find_one({"username": username})
     if user and bcrypt.checkpw(password.encode('utf-8'), user['hashed_password'].encode('utf-8')):
-        return jsonify({"message": "Login successful!"}), 200
+        return jsonify({"message": "Login successful!", "username": username}), 200
     
     return jsonify({"message": "Invalid username or password"}), 401
 
@@ -76,15 +76,48 @@ def get_sleep_logs(username):
 
     return jsonify(logs), 200
 
+@app.route('/leaderboard', methods=['GET'])
+def get_leaderboard():
+    # Grouping the sleep logs by user and summing the total hours slept
+    pipeline = [
+        {
+            '$group': {
+                '_id': '$user',
+                'total_hours': {'$sum': '$time_slept'}
+            }
+        },
+        {
+            '$sort': {'total_hours': -1}  # Sort by total_hours descending
+        }
+    ]
+    leaderboard = list(sleep_logs_collection.aggregate(pipeline))
 
+    for entry in leaderboard:
+        entry['_id'] = str(entry['_id'])
 
+    return jsonify(leaderboard), 200
 
+@app.route('/stats', methods=['GET'])
+def display_stats():
+    username = request.args.get('username')
 
+    sleep_logs = sleep_logs_collection.find({'user': username})
 
+    total_sleep = 0
+    sleep_entries = []
+    
+    for log in sleep_logs:
+        total_sleep += log.get('time_slept', 0)
+        sleep_entries.append(log)
 
+    num_entries = len(sleep_entries)
+    avg_sleep = total_sleep / num_entries if num_entries > 0 else 0
 
-
-
+    return jsonify({
+        'total_sleep_hours': total_sleep,
+        'avg_sleep_per_night': avg_sleep,
+        'num_entries': num_entries
+    }), 200
 
 
 if __name__ == "__main__":

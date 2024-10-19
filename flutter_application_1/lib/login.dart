@@ -46,12 +46,18 @@ class LoginPageState extends State<LoginPage> {
 
         // Check for successful response (status code 200)
         if (response.statusCode == 200) {
+          var responseBody = json.decode(response.body);
+          String loggedInUsername = responseBody['username'];
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Login successful!')),
           );
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const TimerPage()),
+            MaterialPageRoute(
+                builder: (context) => const TimerPage(),
+                settings:
+                    RouteSettings(arguments: {'username': loggedInUsername})),
           );
         } else {
           // Show error if login fails
@@ -86,7 +92,7 @@ class LoginPageState extends State<LoginPage> {
         title: const Text('Login Page'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
