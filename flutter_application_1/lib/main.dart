@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'home.dart';
+import 'login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Sleep Tracker',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -28,10 +31,13 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const HomePage(),
+      routes: {
+        '/login': (context) => const LoginPage(),
+      },
     );
   }
 }
@@ -55,17 +61,49 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  Timer? _timer;
+  int _seconds = 0;
+  bool _isRunning = false;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  void _toggleTimer() {
+    if (_isRunning) {
+      _stopTimer();
+    } 
+    else {
+      _startTimer();
+    }
+  }
+
+    void _startTimer() {
+      setState(() {
+        _isRunning = true;
+        _seconds = 0; // Reset the timer when starting
     });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _seconds++;
+      });
+    });
+  }
+
+  String _formatTime(int totalSeconds) {
+    int hours = totalSeconds ~/ 3600;
+    int minutes = (totalSeconds % 3600) ~/ 60;
+    int seconds = totalSeconds % 60;
+
+    // Format the output to display as HH:MM:SS
+    String hoursStr = hours.toString().padLeft(2, '0');
+    String minutesStr = minutes.toString().padLeft(2, '0');
+    String secondsStr = seconds.toString().padLeft(2, '0');
+
+    return '$hoursStr:$minutesStr:$secondsStr';
+  }
+
+  void _stopTimer() {
+    setState(() {
+      _isRunning = false;
+    });
+    _timer?.cancel();
   }
 
   @override
@@ -106,20 +144,27 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              'Timer is running for:',
             ),
             Text(
-              '$_counter',
+              _formatTime(_seconds),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: _toggleTimer,
+        tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
+        child: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
+
+
+
+
+
+// stop/resume button
+// home page, login
