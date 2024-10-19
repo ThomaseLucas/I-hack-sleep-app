@@ -7,10 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rest Assured'),
-        backgroundColor: const Color(0xFFBF77F6), // Set AppBar color
-      ),
+      
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

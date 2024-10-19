@@ -12,11 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rest Assured',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
+      
       home: const HomePage(), // Start with HomePage
       routes: {
         '/login': (context) => const LoginPage(), // Route to LoginPage
