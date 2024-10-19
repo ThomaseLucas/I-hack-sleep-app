@@ -7,7 +7,7 @@ class StatsPage extends StatelessWidget {
 
   Future<List<dynamic>> fetchLeaderboard() async {
     const String apiUrl =
-        'http://10.244.30.167:5000/leaderboard'; // Adjust IP if necessary
+        'https://sleep.solarwolf.xyz/leaderboard'; // Adjust IP if necessary
 
     final response = await http.get(Uri.parse(apiUrl));
 
@@ -15,6 +15,23 @@ class StatsPage extends StatelessWidget {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load leaderboard');
+    }
+  }
+
+  Widget _buildTrophyIcon(int rank) {
+    if (rank == 1) {
+      return Icon(Icons.emoji_events,
+          color: const Color.fromARGB(255, 247, 242, 90),
+          size: 24.0); // Gold for 1st place
+    } else if (rank == 2) {
+      return Icon(Icons.emoji_events,
+          color: Colors.grey, size: 24.0); // Silver for 2nd place
+    } else if (rank == 3) {
+      return Icon(Icons.emoji_events,
+          color: const Color.fromARGB(255, 183, 148, 44),
+          size: 24.0); // Bronze for 3rd place
+    } else {
+      return const SizedBox.shrink(); // No icon for other ranks
     }
   }
 
@@ -36,9 +53,20 @@ class StatsPage extends StatelessWidget {
             return ListView.builder(
               itemCount: leaderboard.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(leaderboard[index]['_id']),
-                  subtitle: Text('Total Hours: ${leaderboard[index]['total_hours']}'),
+                final rank = index + 1;
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      child: Text('$rank'),
+                    ),
+                    title: Text(leaderboard[index]['_id'],
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(
+                        'Total Hours: ${leaderboard[index]['total_hours']}'),
+                    trailing: _buildTrophyIcon(rank),
+                  ),
                 );
               },
             );
