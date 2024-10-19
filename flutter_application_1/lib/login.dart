@@ -4,59 +4,79 @@ import 'dart:convert';
 import 'timer.dart';
 import 'register.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController _usernameController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
+  _LoginPageState createState() => _LoginPageState();
+}
 
-    Future<void> _login() async {
-      String username = _usernameController.text;
-      String password = _passwordController.text;
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-      // For this example, we assume any non-empty username/password is valid
-      if (username.isNotEmpty && password.isNotEmpty) {
-        const String apiUrl = 'http://127.0.0.1:5000/login';
+  Future<void> _login() async {
+    String username = usernameController.text;
+    String password = passwordController.text;
 
+    // Debug statement to check input values
+    print("DEBUG: Username: $username, Password: $password");
 
-        try {
-          var response = await http.post(  // <-- Added: API POST request
-            Uri.parse(apiUrl),
-            headers: {'Content-Type': 'application/json'},  // <-- Added: JSON headers
-            body: json.encode({
-              'username': username,
-              'password': password,  // <-- Added: Send credentials
-            }),
-          );
+    if (username.isNotEmpty && password.isNotEmpty) {
+      const String apiUrl = 'http://10.0.2.2:5000/login';
 
-          if (response.statusCode == 200) {  // <-- Added: Check for successful response
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Login successful!')),  // <-- Added: Success feedback
-            );
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const TimerPage()),  // Navigate to TimerPage
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid username or password')),  // <-- Added: Error feedback
-            );
-          }
-        } catch (error) {  // <-- Added: Error handling
-          print('Error: $error');
+      try {
+        var response = await http.post(
+          Uri.parse(apiUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'username': username,
+            'password': password,
+          }),
+        );
+
+        // Debug statement to check response status code and body
+        print("DEBUG: Response Status: ${response.statusCode}");
+        print("DEBUG: Response Body: ${response.body}");
+
+        // Check if the widget is still mounted after async operation
+        if (!mounted) return;
+
+        // Check for successful response (status code 200)
+        if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error logging in. Please try again later.')),  // <-- Added: Network error handling
+            const SnackBar(content: Text('Login successful!')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const TimerPage()),
+          );
+        } else {
+          // Show error if login fails
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Invalid username or password')),
           );
         }
-      } else {
+      } catch (error) {
+        // Debug statement to log any errors
+        print("DEBUG: Error logging in: $error");
+
+        // Check if the widget is still mounted after async operation
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter valid credentials')),  // <-- Added: Handle empty fields
+          const SnackBar(content: Text('Error logging in. Please try again later.')),
         );
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter valid credentials')),
+      );
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Page'),
@@ -67,14 +87,14 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
-              controller: _usernameController,
+              controller: usernameController,
               decoration: const InputDecoration(
                 labelText: 'Username',
               ),
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _passwordController,
+              controller: passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
               ),

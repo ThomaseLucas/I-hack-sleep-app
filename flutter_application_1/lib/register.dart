@@ -14,7 +14,7 @@ class RegisterPage extends StatelessWidget {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    const String api_url = "http://127.0.0.1:5000/register";
+    const String api_url = "http://10.0.2.2:5000/register";
 
     try {
       var response = await http.post(
