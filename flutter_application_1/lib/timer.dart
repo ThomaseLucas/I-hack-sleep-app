@@ -27,15 +27,14 @@ class _TimerPageState extends State<TimerPage> {
       username = args['username'] as String;
     } else {
       return;
-      //username = 'user@example.com'; // Fallback if no username is passed
     }
   }
 
   void _toggleTimer() {
     if (_isRunning) {
-      _stopTimer();
+      _resetTimer(); // Reset the timer and log the data when stopping
     } else {
-      _startTimer();
+      _startTimer(); // Start the timer if it isn't running
     }
   }
 
@@ -62,19 +61,21 @@ class _TimerPageState extends State<TimerPage> {
     setState(() {
       _seconds = 0; // Reset the seconds to 0
     });
-    await logSleepData(_seconds);
+    await logSleepData(_seconds); // Log the sleep data after reset
   }
 
   Future<void> logSleepData(int timeElapsed) async {
     const String apiUrl = 'http://10.244.30.167:5000/log_sleep'; // API URL
 
     try {
+      double hoursSlept = timeElapsed / 3600;
+
       var response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'user': username, // Use the logged-in username
-          'time_slept': _formatTime(timeElapsed),
+          'time_slept': hoursSlept,
           'date': DateTime.now().toIso8601String(),
         }),
       );
@@ -112,7 +113,9 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      appBar: AppBar(
+        title: const Text('Timer Page'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -127,10 +130,21 @@ class _TimerPageState extends State<TimerPage> {
             Image.asset(
               _isRunning ? 'assets/frog_asleep.jpg' : 'assets/frog_awake.jpeg',
             ),
+            const SizedBox(height: 20), // Add some space below the image
+            ElevatedButton(
+              onPressed: _toggleTimer,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFBF77F6), // Set button color
+                minimumSize: const Size(200, 50), // Set button size
+              ),
+              child: Text(
+                _isRunning ? 'Stop Tracking' : 'Start Tracking',
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
           ],
         ),
       ),
-      
       floatingActionButton: Stack(
         children: [
           // Home Button in the bottom-left corner
@@ -151,7 +165,7 @@ class _TimerPageState extends State<TimerPage> {
               ),
             ),
           ),
-          
+
           // Other buttons on the right side
           Positioned(
             bottom: 16,
@@ -174,9 +188,9 @@ class _TimerPageState extends State<TimerPage> {
                   tooltip: 'Restart Timer',
                   backgroundColor: Colors.white,
                   child: const Icon(
-                      Icons.replay,
-                      color: Colors.black,
-                    ),
+                    Icons.replay,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(
@@ -189,9 +203,9 @@ class _TimerPageState extends State<TimerPage> {
                   tooltip: 'View Stats',
                   backgroundColor: Colors.white,
                   child: const Icon(
-                      Icons.show_chart,
-                      color: Colors.black,
-                    ),
+                    Icons.show_chart,
+                    color: Colors.black,
+                  ),
                 ),
               ],
             ),
