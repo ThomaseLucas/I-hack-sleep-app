@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
@@ -6,7 +7,7 @@ import bcrypt
 
 #This acesses the env file.
 load_dotenv()
-MONGO_URI = os.getenv("mongo_uri")
+MONGO_URI = os.getenv("MONGO_URI")
 
 #this access the db client and goes into the db
 client = MongoClient(MONGO_URI)
@@ -17,6 +18,8 @@ users_collection = db.get_collection('users')
 sleep_logs_collection = db.get_collection('sleep_logs')
 
 app = Flask(__name__)
+
+CORS(app)
 
 
 #This stores inputs into the collections into the users collection
@@ -33,7 +36,7 @@ def register_user():
         "hashed_password": hashed.decode('utf-8'),
         "email": email
     })
-    return jsonify({"message": "User registed successfully"})
+    return jsonify({"message": "User registed successfully"}), 201
 
 @app.route('/login', methods=['POST'])
 def login_user():
@@ -85,4 +88,4 @@ def get_sleep_logs(username):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='10.244.30.167', port=5000)
