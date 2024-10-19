@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'login.dart';
-import 'timer.dart'; // Import the timer page
+
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(), // Start with HomePage
       routes: {
         '/login': (context) => const LoginPage(), // Route to LoginPage
-        '/timer': (context) => const TimerPage(), // Route to TimerPage
+        
       },
     );
   }

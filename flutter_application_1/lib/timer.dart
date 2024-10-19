@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'stats.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -71,6 +72,7 @@ class _TimerPageState extends State<TimerPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            const SizedBox(height: 20),
             const Text(
               'Timer is running for:',
             ),
@@ -78,6 +80,14 @@ class _TimerPageState extends State<TimerPage> {
               _formatTime(_seconds),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+
+            const SizedBox(height: 20),
+            Image.asset(
+              'assets/koala_sleeping.png',
+              height: 100, 
+              width: 100,
+            ),
+
           ],
         ),
       ),
@@ -96,6 +106,18 @@ class _TimerPageState extends State<TimerPage> {
             onPressed: _resetTimer,
             tooltip: 'Restart Timer',
             child: const Icon(Icons.replay),
+          ),
+
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const StatsPage()),
+              );
+            },
+            tooltip: 'View Stats',
+            child: const Icon(Icons.show_chart),
           ),
 
         ],
