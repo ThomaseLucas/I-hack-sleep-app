@@ -25,7 +25,8 @@ class _TimerPageState extends State<TimerPage> {
     if (args != null && args.containsKey('username')) {
       username = args['username'] as String;
     } else {
-      username = 'user@example.com'; // Fallback if no username is passed
+      return;
+      //username = 'user@example.com'; // Fallback if no username is passed
     }
   }
 
@@ -72,7 +73,7 @@ class _TimerPageState extends State<TimerPage> {
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'user': username, // Use the logged-in username
-          'time_slept': timeElapsed,
+          'time_slept': _formatTime(timeElapsed),
           'date': DateTime.now().toIso8601String(),
         }),
       );
