@@ -137,7 +137,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           Positioned(
             bottom: 16,
-            right: 16,
+            left: 16,
             child: FloatingActionButton(
               onPressed: () {
                 Navigator.pushReplacement(

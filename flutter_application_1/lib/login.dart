@@ -154,7 +154,7 @@ class LoginPageState extends State<LoginPage> {
           ),
           Positioned(
             bottom: 16,
-            right: 16,
+            left: 16,
             child: FloatingActionButton(
               onPressed: () {
                 Navigator.pushReplacement(

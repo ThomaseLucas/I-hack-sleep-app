@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'stats.dart';
 import 'dart:convert';
+import 'home.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -129,42 +130,71 @@ class _TimerPageState extends State<TimerPage> {
           ],
         ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+      
+      floatingActionButton: Stack(
         children: [
-          FloatingActionButton(
-            onPressed: _toggleTimer,
-            tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
-            backgroundColor: Colors.white,
-            child: Icon(
-              _isRunning ? Icons.pause : Icons.play_arrow,
-              color: Colors.black,
+          // Home Button in the bottom-left corner
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+              backgroundColor: Colors.white,
+              child: const Icon(
+                Icons.home,
+                color: Colors.black,
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: _resetTimer,
-            tooltip: 'Restart Timer',
-            backgroundColor: Colors.white,
-            child: const Icon(
-                Icons.replay,
-                color: Colors.black,
-              ),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const StatsPage()),
-              );
-            },
-            tooltip: 'View Stats',
-            backgroundColor: Colors.white,
-            child: const Icon(
-                Icons.show_chart,
-                color: Colors.black,
-              ),
+          
+          // Other buttons on the right side
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: _toggleTimer,
+                  tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    _isRunning ? Icons.pause : Icons.play_arrow,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  onPressed: _resetTimer,
+                  tooltip: 'Restart Timer',
+                  backgroundColor: Colors.white,
+                  child: const Icon(
+                      Icons.replay,
+                      color: Colors.black,
+                    ),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StatsPage()),
+                    );
+                  },
+                  tooltip: 'View Stats',
+                  backgroundColor: Colors.white,
+                  child: const Icon(
+                      Icons.show_chart,
+                      color: Colors.black,
+                    ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
