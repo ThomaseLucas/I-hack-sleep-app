@@ -26,15 +26,14 @@ class _TimerPageState extends State<TimerPage> {
       username = args['username'] as String;
     } else {
       return;
-      //username = 'user@example.com'; // Fallback if no username is passed
     }
   }
 
   void _toggleTimer() {
     if (_isRunning) {
-      _stopTimer();
+      _resetTimer(); // Reset the timer and log the data when stopping
     } else {
-      _startTimer();
+      _startTimer(); // Start the timer if it isn't running
     }
   }
 
@@ -61,11 +60,11 @@ class _TimerPageState extends State<TimerPage> {
     setState(() {
       _seconds = 0; // Reset the seconds to 0
     });
-    await logSleepData(_seconds);
+    await logSleepData(_seconds); // Log the sleep data after reset
   }
 
   Future<void> logSleepData(int timeElapsed) async {
-    const String apiUrl = 'http://10.244.30.167:5000/log_sleep'; // API URL
+    const String apiUrl = 'http://192.168.56.1:5000/log_sleep'; // API URL
 
     try {
       double hoursSlept = timeElapsed / 3600;
@@ -130,35 +129,44 @@ class _TimerPageState extends State<TimerPage> {
             Image.asset(
               _isRunning ? 'assets/frog_asleep.jpg' : 'assets/frog_awake.jpeg',
             ),
+            const SizedBox(height: 20), // Add some space below the image
+            ElevatedButton(
+              onPressed: _toggleTimer,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFBF77F6), // Set button color
+                minimumSize: const Size(200, 50), // Set button size
+              ),
+              child: Text(
+                _isRunning ? 'Stop Tracking' : 'Start Tracking',
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (_isRunning)
+              ElevatedButton(
+                onPressed: _stopTimer,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFBF77F6), // Set button color
+                  shape: const CircleBorder(), // Make the button circular
+                  padding: const EdgeInsets.all(20), // Add padding for the icon
+                ),
+                child: const Icon(
+                  Icons.pause, // Use the pause icon
+                  size: 40, // Set the icon size
+                ),
+              ),
           ],
         ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: _toggleTimer,
-            tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
-            child: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: _resetTimer,
-            tooltip: 'Restart Timer',
-            child: const Icon(Icons.replay),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const StatsPage()),
-              );
-            },
-            tooltip: 'View Stats',
-            child: const Icon(Icons.show_chart),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const StatsPage()),
+          );
+        },
+        tooltip: 'View Stats',
+        child: const Icon(Icons.show_chart),
       ),
     );
   }
