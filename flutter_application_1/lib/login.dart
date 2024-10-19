@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool _isPasswordVisible = false; // Track if the password is visible
+  bool _isPasswordVisible = false;  // Track if the password is visible
 
   Future<void> _login() async {
     String username = usernameController.text;
@@ -71,8 +71,7 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double textBoxWidth = MediaQuery.of(context).size.width *
-        0.7; // Slightly more than 2/3 of the screen
+    final double textBoxWidth = MediaQuery.of(context).size.width * 0.7;  // Slightly more than 2/3 of the screen
 
     return Scaffold(
       appBar: AppBar(
@@ -86,81 +85,79 @@ class LoginPageState extends State<LoginPage> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: textBoxWidth,
-              child: TextField(
-                controller: usernameController,
-                decoration: InputDecoration(
-                  label: const Center(
-                    child: Text('Username'),
-                  ),
-                  prefixIcon: const Icon(Icons.person),
-                  border: OutlineInputBorder(
-                    // Rounded light grey border
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
+      body: Center(  // Center everything vertically and horizontally
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,  // Shrink the column vertically to center it
+            children: <Widget>[
+              Container(
+                width: textBoxWidth,
+                child: TextField(
+                  controller: usernameController,
+                  decoration: InputDecoration(
+                    label: const Center(
+                      child: Text('Username'),
+                    ),
+                    prefixIcon: const Icon(Icons.person),
+                    border: OutlineInputBorder(  // Rounded light grey border
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16.0),
-            Container(
-              width: textBoxWidth,
-              child: TextField(
-                controller: passwordController,
-                obscureText: !_isPasswordVisible, // Toggle password visibility
-                decoration: InputDecoration(
-                  label: const Center(
-                    child: Text('Password'),
-                  ),
-                  prefixIcon: const Icon(Icons.vpn_key),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+              const SizedBox(height: 16.0),
+              Container(
+                width: textBoxWidth,
+                child: TextField(
+                  controller: passwordController,
+                  obscureText: !_isPasswordVisible,  // Toggle password visibility
+                  decoration: InputDecoration(
+                    label: const Center(
+                      child: Text('Password'),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible =
-                            !_isPasswordVisible; // Toggle the state
-                      });
-                    },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
+                    prefixIcon: const Icon(Icons.vpn_key),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;  // Toggle the state
+                        });
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Login'),
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RegisterPage()),
-                );
-              },
-              child: const Text('Don\'t have an account? Register'),
-            ),
-          ],
+              const SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: _login,
+                child: const Text('Login'),
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RegisterPage()),
+                  );
+                },
+                child: const Text('Don\'t have an account? Register'),
+              ),
+            ],
+          ),
         ),
       ),
     );
