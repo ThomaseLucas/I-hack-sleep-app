@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'stats.dart';
-import 'dart:convert'; 
+import 'dart:convert';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -15,7 +15,19 @@ class _TimerPageState extends State<TimerPage> {
   Timer? _timer;
   int _seconds = 0;
   bool _isRunning = false;
-  String username = 'user@example.com';
+  late String username; // Now the username is dynamically set
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Retrieve the username from the Navigator arguments
+    final args = ModalRoute.of(context)?.settings.arguments as Map?;
+    if (args != null && args.containsKey('username')) {
+      username = args['username'] as String;
+    } else {
+      username = 'user@example.com'; // Fallback if no username is passed
+    }
+  }
 
   void _toggleTimer() {
     if (_isRunning) {
@@ -52,20 +64,19 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   Future<void> logSleepData(int timeElapsed) async {
-    const String apiUrl = 'http://10.0.2.2:5000/log_sleep'; // Change to your API URL
+    const String apiUrl = 'http://192.168.56.1:5000/log_sleep'; // API URL
 
     try {
       var response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'user': username,
+          'user': username, // Use the logged-in username
           'time_slept': timeElapsed,
           'date': DateTime.now().toIso8601String(),
         }),
       );
 
-      // Check the response status and show a snackbar if needed
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sleep data logged successfully!')),
@@ -78,26 +89,23 @@ class _TimerPageState extends State<TimerPage> {
     } catch (error) {
       print("DEBUG: Error logging sleep data: $error");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error logging sleep data. Please try again later.')),
+        const SnackBar(
+            content: Text('Error logging sleep data. Please try again later.')),
       );
     }
   }
-
 
   String _formatTime(int totalSeconds) {
     int hours = totalSeconds ~/ 3600;
     int minutes = (totalSeconds % 3600) ~/ 60;
     int seconds = totalSeconds % 60;
 
-    // Format the output to display as HH:MM:SS
     String hoursStr = hours.toString().padLeft(2, '0');
     String minutesStr = minutes.toString().padLeft(2, '0');
     String secondsStr = seconds.toString().padLeft(2, '0');
 
     return '$hoursStr:$minutesStr:$secondsStr';
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -110,41 +118,32 @@ class _TimerPageState extends State<TimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const SizedBox(height: 10),
-            const Text(
-              'Timer is running for:',
-            ),
+            const Text('Timer is running for:'),
             Text(
               _formatTime(_seconds),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-
             const SizedBox(height: 10),
             Image.asset(
-              _isRunning
-                  ? 'assets/frog_asleep.jpg' // Display asleep image
-                  : 'assets/frog_awake.jpeg', // Display awake image
+              _isRunning ? 'assets/frog_asleep.jpg' : 'assets/frog_awake.jpeg',
             ),
-
           ],
         ),
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-
           FloatingActionButton(
             onPressed: _toggleTimer,
             tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
             child: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
           ),
-
-          const SizedBox(height: 16), // Add some space between the buttons
+          const SizedBox(height: 16),
           FloatingActionButton(
             onPressed: _resetTimer,
             tooltip: 'Restart Timer',
             child: const Icon(Icons.replay),
           ),
-
           const SizedBox(height: 16),
           FloatingActionButton(
             onPressed: () {
@@ -156,7 +155,6 @@ class _TimerPageState extends State<TimerPage> {
             tooltip: 'View Stats',
             child: const Icon(Icons.show_chart),
           ),
-
         ],
       ),
     );
