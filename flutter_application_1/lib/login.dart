@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'timer.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -12,12 +13,17 @@ class LoginPage extends StatelessWidget {
       String username = _usernameController.text;
       String password = _passwordController.text;
 
-      // Handle your login logic here
-      print('Username: $username');
-      print('Password: $password');
-
-      // For now, we'll just pop the login page to go back to the home page
-      Navigator.pop(context);
+      // For this example, we assume any non-empty username/password is valid
+      if (username.isNotEmpty && password.isNotEmpty) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TimerPage()), // Navigate to TimerPage
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter valid credentials')),
+        );
+      }
     }
 
     return Scaffold(
