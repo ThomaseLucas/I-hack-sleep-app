@@ -6,15 +6,15 @@ import bcrypt
 
 #This acesses the env file.
 load_dotenv()
-mongo_uri = os.getenv("mongo_uri")
+MONGO_URI = os.getenv("mongo_uri")
 
 #this access the db client and goes into the db
-client = MongoClient(mongo_uri)
-db = client['sleep_app']
+client = MongoClient(MONGO_URI)
+db = client.get_database("sleep_app")
 
 #this creates collections within the db to hold user info such as hashed passwords, and also sleep time. 
-users_collection = db['users']
-sleep_logs_collection = db['sleep_logs']
+users_collection = db.get_collection('users')
+sleep_logs_collection = db.get_collection('sleep_logs')
 
 app = Flask(__name__)
 
@@ -49,10 +49,16 @@ def login_user():
 
 #This stores data from the app when you press the button into the sleep logs collection
 @app.route('/log_sleep', methods=['POST'])
-def log_sleep_data(username, hours_slept, date):
-    sleep_logs_collection({
+def log_sleep_data():
+    data = request.json
+    username = data['user']
+    hours_slept = data['time_slept']
+    date = data['date']
+
+
+    sleep_logs_collection.insert_one({
         "user": username,
-        "hours_slept": hours_slept,
+        "time_slept": hours_slept,
         "date":date
     })
     return jsonify({"message": "Sleep data logged successfully!"}), 201
@@ -61,8 +67,10 @@ def log_sleep_data(username, hours_slept, date):
 @app.route('/sleep_logs/<username>', methods=['GET'])
 def get_sleep_logs(username):
     logs = list(sleep_logs_collection.find({"user": username}))
+
     for log in logs:
-        log['id'] = str(log['_id'])
+        log['_id'] = str(log['_id'])
+
     return jsonify(logs), 200
 
 
