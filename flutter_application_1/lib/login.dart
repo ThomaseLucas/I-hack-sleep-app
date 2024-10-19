@@ -8,10 +8,10 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -23,7 +23,8 @@ class _LoginPageState extends State<LoginPage> {
     print("DEBUG: Username: $username, Password: $password");
 
     if (username.isNotEmpty && password.isNotEmpty) {
-      const String apiUrl = 'http://10.0.2.2:5000/login';
+      print("Attempting to log in...");
+      const String apiUrl = 'http://192.168.56.1:5000/login';
 
       try {
         var response = await http.post(
@@ -34,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
             'password': password,
           }),
         );
+        print("Response Status: ${response.statusCode}");
 
         // Debug statement to check response status code and body
         print("DEBUG: Response Status: ${response.statusCode}");
@@ -65,10 +67,12 @@ class _LoginPageState extends State<LoginPage> {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error logging in. Please try again later.')),
+          const SnackBar(
+              content: Text('Error logging in. Please try again later.')),
         );
       }
     } else {
+      print("Missing username or password.");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter valid credentials')),
       );

@@ -2,30 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
-  static final TextEditingController _usernameController = TextEditingController();
-  static final TextEditingController _emailController = TextEditingController();
-  static final TextEditingController _passwordController = TextEditingController();
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _register(BuildContext context) async {
     String username = _usernameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    const String api_url = "http://10.0.2.2:5000/register";
+    // Check if any fields are empty
+    if (username.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All fields are required')),
+      );
+      return;
+    }
+
+    print(
+        "DEBUG: Username: $username, Email: $email, Password: $password"); // Debugging
+
+    const String apiUrl = "http://192.168.56.1:5000/register";
 
     try {
       var response = await http.post(
-        Uri.parse(api_url),
+        Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'username': username, 
-          'email': email,
-          'password': password
-        }),
+        body: json.encode(
+            {'username': username, 'email': email, 'password': password}),
       );
+
+      print("DEBUG: Response Status: ${response.statusCode}"); // Debugging
+      print("DEBUG: Response Body: ${response.body}"); // Debugging
+
+      if (!mounted) return; // Ensure the widget is still mounted
 
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -34,16 +52,18 @@ class RegisterPage extends StatelessWidget {
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error registering. Please try again later')),
+          const SnackBar(
+              content: Text('Error registering. Please try again later')),
         );
       }
-    } catch(error) {
-      print('Error $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error registering. Please try again later.'))
-      );
+    } catch (error) {
+      print("DEBUG: Error registering: $error"); // Debugging
+      if (!mounted) return; // Ensure the widget is still mounted
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Error registering. Please try again later.')));
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,10 +97,7 @@ class RegisterPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Handle registration logic here
-                // You can navigate back to login or main page
                 _register(context);
-                 // For now, just go back
               },
               child: const Text('Register'),
             ),
