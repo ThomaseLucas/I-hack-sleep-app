@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'timer.dart';
 import 'register.dart';
+import 'package:parallax_rain/parallax_rain.dart'; // Import the ParallaxRain package
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,7 +25,7 @@ class LoginPageState extends State<LoginPage> {
 
     if (username.isNotEmpty && password.isNotEmpty) {
       print("Attempting to log in...");
-      const String apiUrl = 'http://192.168.56.1:5000/login';
+      const String apiUrl = 'http://10.244.30.167:5000/login';
 
       try {
         var response = await http.post(
@@ -91,42 +92,66 @@ class LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login Page'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Username',
-              ),
+      body: Stack(
+        children: [
+          _buildRainBackground(), // Add rain background
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextField(
+                  controller: usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
+                    filled: true,
+                    fillColor: Colors.white, // Background color for text field
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    filled: true,
+                    fillColor: Colors.white, // Background color for text field
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: _login,
+                  child: const Text('Login'),
+                ),
+                const SizedBox(height: 10),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegisterPage()),
+                    );
+                  },
+                  child: const Text('Don\'t have an account? Register'),
+                ),
+              ],
             ),
-            const SizedBox(height: 16.0),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Login'),
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RegisterPage()),
-                );
-              },
-              child: const Text('Don\'t have an account? Register'),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRainBackground() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: ParallaxRain(
+        dropColors: [
+          const Color(0xFFBF77F6), // Matching with AppBar color
+          const Color(0xFF21ECE5), // Matching with gradient colors
+          const Color(0xFF8D8D8D), // Neutral gray for variety
+          const Color(0xFFFFFFFF), // White for a brighter effect
+        ],
       ),
     );
   }

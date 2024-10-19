@@ -122,4 +122,4 @@ def display_stats():
 
 if __name__ == "__main__":
     #jacob's laptop app.run(debug=True, host='10.244.30.167', port=5000)
-    app.run(debug=True, host='192.168.56.1', port=5000) #Thomas' laptop
+    app.run(debug=True, host='10.244.30.167', port=5000) #Thomas' laptop

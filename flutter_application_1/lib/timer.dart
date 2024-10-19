@@ -65,7 +65,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   Future<void> logSleepData(int timeElapsed) async {
-    const String apiUrl = 'http://192.168.56.1:5000/log_sleep'; // API URL
+    const String apiUrl = 'http://10.244.30.167:5000/log_sleep'; // API URL
 
     try {
       var response = await http.post(
