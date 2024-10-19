@@ -111,9 +111,7 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Timer Page'),
-      ),
+      
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,13 +135,21 @@ class _TimerPageState extends State<TimerPage> {
           FloatingActionButton(
             onPressed: _toggleTimer,
             tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
-            child: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
+            backgroundColor: Colors.white,
+            child: Icon(
+              _isRunning ? Icons.pause : Icons.play_arrow,
+              color: Colors.black,
+            ),
           ),
           const SizedBox(height: 16),
           FloatingActionButton(
             onPressed: _resetTimer,
             tooltip: 'Restart Timer',
-            child: const Icon(Icons.replay),
+            backgroundColor: Colors.white,
+            child: const Icon(
+                Icons.replay,
+                color: Colors.black,
+              ),
           ),
           const SizedBox(height: 16),
           FloatingActionButton(
@@ -154,7 +160,11 @@ class _TimerPageState extends State<TimerPage> {
               );
             },
             tooltip: 'View Stats',
-            child: const Icon(Icons.show_chart),
+            backgroundColor: Colors.white,
+            child: const Icon(
+                Icons.show_chart,
+                color: Colors.black,
+              ),
           ),
         ],
       ),
