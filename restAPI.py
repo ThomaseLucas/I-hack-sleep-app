@@ -78,13 +78,27 @@ def get_sleep_logs(username):
 
 
 
+@app.route('/stats', methods=['GET'])
+def display_stats():
+    username = request.args.get('username')
 
+    sleep_logs = sleep_logs_collection.find({'user': username})
 
+    total_sleep = 0
+    sleep_entries = []
+    
+    for log in sleep_logs:
+        total_sleep += log.get('time_slept', 0)
+        sleep_entries.append(log)
 
+    num_entries = len(sleep_entries)
+    avg_sleep = total_sleep / num_entries if num_entries > 0 else 0
 
-
-
-
+    return jsonify({
+        'total_sleep_hours': total_sleep,
+        'avg_sleep_per_night': avg_sleep,
+        'num_entries': num_entries
+    }), 200
 
 
 if __name__ == "__main__":
