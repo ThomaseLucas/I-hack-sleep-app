@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'stats.dart';
 import 'dart:convert';
+import 'home.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -64,7 +65,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   Future<void> logSleepData(int timeElapsed) async {
-    const String apiUrl = 'http://192.168.56.1:5000/log_sleep'; // API URL
+    const String apiUrl = 'http://10.244.30.167:5000/log_sleep'; // API URL
 
     try {
       double hoursSlept = timeElapsed / 3600;
@@ -141,32 +142,75 @@ class _TimerPageState extends State<TimerPage> {
                 style: const TextStyle(fontSize: 18),
               ),
             ),
-            const SizedBox(height: 16),
-            if (_isRunning)
-              ElevatedButton(
-                onPressed: _stopTimer,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFBF77F6), // Set button color
-                  shape: const CircleBorder(), // Make the button circular
-                  padding: const EdgeInsets.all(20), // Add padding for the icon
-                ),
-                child: const Icon(
-                  Icons.pause, // Use the pause icon
-                  size: 40, // Set the icon size
-                ),
-              ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const StatsPage()),
-          );
-        },
-        tooltip: 'View Stats',
-        child: const Icon(Icons.show_chart),
+      floatingActionButton: Stack(
+        children: [
+          // Home Button in the bottom-left corner
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+              backgroundColor: Colors.white,
+              child: const Icon(
+                Icons.home,
+                color: Colors.black,
+              ),
+            ),
+          ),
+
+          // Other buttons on the right side
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: _toggleTimer,
+                  tooltip: _isRunning ? 'Stop Timer' : 'Start Timer',
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    _isRunning ? Icons.pause : Icons.play_arrow,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  onPressed: _resetTimer,
+                  tooltip: 'Restart Timer',
+                  backgroundColor: Colors.white,
+                  child: const Icon(
+                    Icons.replay,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StatsPage()),
+                    );
+                  },
+                  tooltip: 'View Stats',
+                  backgroundColor: Colors.white,
+                  child: const Icon(
+                    Icons.show_chart,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
