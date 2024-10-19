@@ -45,7 +45,7 @@ def login_user():
     if user and bcrypt.checkpw(password.encode('utf-8'), user['hashed_password'].encode('utf-8')):
         return jsonify({"message": "Login successful!"}), 200
     
-    return jsonify({"message":})
+    return jsonify({"message": "Invalid username or password"}), 401
 
 #This stores data from the app when you press the button into the sleep logs collection
 @app.route('/log_sleep', methods=['POST'])
@@ -55,12 +55,26 @@ def log_sleep_data(username, hours_slept, date):
         "hours_slept": hours_slept,
         "date":date
     })
-    return jsonify({"message"}: "Sleep data logged successfully!"), 201
+    return jsonify({"message": "Sleep data logged successfully!"}), 201
 
+#get sleep logs endpoint
 @app.route('/sleep_logs/<username>', methods=['GET'])
-def get_user(username):
-    return users_collection.find_one({"username": username})
-
-
 def get_sleep_logs(username):
-    return list(sleep_logs_collection.find({"user": username}))
+    logs = list(sleep_logs_collection.find({"user": username}))
+    for log in logs:
+        log['id'] = str(log['_id'])
+    return jsonify(logs), 200
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
