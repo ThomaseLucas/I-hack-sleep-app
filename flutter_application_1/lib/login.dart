@@ -16,17 +16,14 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isPasswordVisible = false; // Track the visibility of the password
 
   Future<void> _login() async {
     String username = usernameController.text;
     String password = passwordController.text;
 
-    // Debug statement to check input values
-    print("DEBUG: Username: $username, Password: $password");
-
     if (username.isNotEmpty && password.isNotEmpty) {
-      print("Attempting to log in...");
-      const String apiUrl = 'http://10.244.30.167:5000/login';
+      const String apiUrl = 'https://sleep.solarwolf.xyz/login';
 
       try {
         var response = await http.post(
@@ -37,16 +34,9 @@ class LoginPageState extends State<LoginPage> {
             'password': password,
           }),
         );
-        print("Response Status: ${response.statusCode}");
 
-        // Debug statement to check response status code and body
-        print("DEBUG: Response Status: ${response.statusCode}");
-        print("DEBUG: Response Body: ${response.body}");
-
-        // Check if the widget is still mounted after async operation
         if (!mounted) return;
 
-        // Check for successful response (status code 200)
         if (response.statusCode == 200) {
           var responseBody = json.decode(response.body);
           String loggedInUsername = responseBody['username'];
@@ -57,21 +47,17 @@ class LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => const TimerPage(),
-                settings:
-                    RouteSettings(arguments: {'username': loggedInUsername})),
+              builder: (context) => const TimerPage(),
+              settings:
+                  RouteSettings(arguments: {'username': loggedInUsername}),
+            ),
           );
         } else {
-          // Show error if login fails
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Invalid username or password')),
           );
         }
       } catch (error) {
-        // Debug statement to log any errors
-        print("DEBUG: Error logging in: $error");
-
-        // Check if the widget is still mounted after async operation
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -80,14 +66,13 @@ class LoginPageState extends State<LoginPage> {
         );
       }
     } else {
-      print("Missing username or password.");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter valid credentials')),
       );
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -119,17 +104,53 @@ class LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       TextField(
                         controller: usernameController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Username',
+                          fillColor: Colors.grey[300], // Light gray background
+                          filled: true, // Apply background color
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey[600]!, // Darker gray border
+                              width: 2.0,
+                            ),
+                          ),
+                          prefixIcon: const Icon(
+                              Icons.person), // Silhouette icon for username
                         ),
                       ),
                       const SizedBox(height: 16.0),
                       TextField(
                         controller: passwordController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Password',
+                          fillColor: Colors.grey[300], // Light gray background
+                          filled: true, // Apply background color
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey[600]!, // Darker gray border
+                              width: 2.0,
+                            ),
+                          ),
+                          prefixIcon:
+                              const Icon(Icons.lock), // Key icon for password
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Toggle visibility based on _isPasswordVisible
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
                         ),
-                        obscureText: true,
+                        obscureText:
+                            !_isPasswordVisible, // Toggle password visibility
                       ),
                       const SizedBox(height: 20.0),
                       ElevatedButton(
@@ -137,14 +158,29 @@ class LoginPageState extends State<LoginPage> {
                         child: const Text('Login'),
                       ),
                       const SizedBox(height: 10),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const RegisterPage()),
-                          );
-                        },
-                        child: const Text('Don\'t have an account? Register'),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10.0,
+                          horizontal: 15.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white, // White background
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Rounded corners
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const RegisterPage()),
+                            );
+                          },
+                          child: const Text(
+                            'Don\'t have an account? Register',
+                            style: TextStyle(color: Colors.black), // Black text
+                          ),
+                        ),
                       ),
                     ],
                   ),
